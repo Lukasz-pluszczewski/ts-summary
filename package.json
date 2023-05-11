@@ -1,6 +1,6 @@
 {
   "name": "ts-summary",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Script generating type declarations for selected files to make it easier to send context to LLMs",
   "main": "index.js",
   "bin": {
