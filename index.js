@@ -79,7 +79,7 @@ export const loadListFromFile = async () => {
 	}
 }
 
-export const prepareCodeContext = async (directory, { clearHistory = false } = {}) => {
+export const prepareCodeContext = async (directory, { clearHistory = false, returnJson = false } = {}) => {
 	console.log('Using directory:', path.resolve(directory));
 	inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
@@ -110,6 +110,20 @@ export const prepareCodeContext = async (directory, { clearHistory = false } = {
 		declaration: true,
 		emitDeclarationOnly: true,
 	});
+
+	if (returnJson) {
+		const declarations = Object.entries(createdFiles).reduce((accu, [filePath, declaration]) => {
+			accu[path.relative(directory, filePath)] = declaration;
+			return accu;
+		}, {});
+
+		const declarationsString = JSON.stringify(declarations, null, 2);
+		pbcopy(declarationsString);
+
+		console.log('\nSuccess! Declarations copied to clipboard.');
+
+		return declarationsString;
+	}
 
 	const declarationsString = Object.entries(createdFiles)
 		.map(([filePath, declaration]) => `${path.relative(directory, filePath)}\n\`\`\`\n${declaration}\n\`\`\``)

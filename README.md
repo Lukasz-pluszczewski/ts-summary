@@ -17,17 +17,45 @@ or just
 tssum
 ```
 
+#### Flags
+
 Script remembers the last selected files. To ignore saved file list set -s flag:
 ```sh
 tssum -s
 ```
 
+For JSON output use -j flag:
+```sh
+tssum -j
+```
+
 ### Example output
 
-test/testFile.d.ts
 ```
+test/testFile.d.ts
+
+\```
 export declare const func: (foo: string, bar: number) => {
     foo: string;
     bar: number;
 };
+\```
+```
+
+### Example JSON output:
+```json
+{
+  "test/testFile.d.ts": "export declare const func: (foo: string, bar: number) => {\n    foo: string;\n    bar: number;\n};\n"
+}
+```
+
+### Programmatic usage
+CommonJS is not supported as latest version of inquirer.
+```ts
+import { prepareCodeContext } from 'ts-summary';
+
+// by default prepareCodeContext returns string (as in example above), returnJson changes that behaviour
+const results = await prepareCodeContext(directory, { ignoreSaved: true, returnJson: true });
+
+JSON.parse(results);
 ```

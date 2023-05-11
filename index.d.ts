@@ -7,4 +7,4 @@ export function getAllFilesWithinDirectory(dir: string, extensions: string[]): a
 export function includeDirectoryFiles(files: string[], extensions: string[]): Promise<string[]>;
 export function saveListToFile(list: string[]): Promise<void>;
 export function loadListFromFile(): Promise<string[]>;
-export function prepareCodeContext(directory: string, options?: { clearHistory?: boolean }): Promise<string>;
+export function prepareCodeContext(directory: string, options?: { clearHistory?: boolean, returnJson?: boolean }): Promise<string>;
