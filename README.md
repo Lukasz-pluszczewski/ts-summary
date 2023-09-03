@@ -29,6 +29,11 @@ For JSON output use -j flag:
 tssum -j
 ```
 
+To return actual file contents instead of generated declarations use --contents:
+```sh
+tssum --contents
+```
+
 ### Example output
 
 ```
@@ -59,3 +64,12 @@ const results = await prepareCodeContext(directory, { ignoreSaved: true, returnJ
 
 JSON.parse(results);
 ```
+
+### Changelog
+#### 1.0.0
+- Added support for returning actual file contents instead of generated declarations with --contents flag
+
+#### 0.0.1
+- Initial release
+- Added support for JSON output with -j flag
+- Added support for ignoring saved file list with -s flag

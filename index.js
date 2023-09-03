@@ -46,7 +46,18 @@ export const includeDirectoryFiles = async (files, extensions) => {
 	}, Promise.resolve([]));
 
 	return data;
-}
+};
+
+export const getFilesContents = async files => {
+	const data = await files.reduce(async (accuPromise, file) => {
+		const accu = await accuPromise;
+		const contents = await fs.readFile(file, 'utf8');
+		accu[file] = contents;
+		return accu;
+	}, Promise.resolve({}));
+
+	return data;
+};
 export function compile(fileNames, options) {
 	const createdFiles = {};
 	const host = ts.createCompilerHost(options);
@@ -79,7 +90,7 @@ export const loadListFromFile = async () => {
 	}
 }
 
-export const prepareCodeContext = async (directory, { clearHistory = false, returnJson = false } = {}) => {
+export const prepareCodeContext = async (directory, { clearHistory = false, returnJson = false, returnContents = false } = {}) => {
 	console.log('Using directory:', path.resolve(directory));
 	inquirer.registerPrompt('file-tree-selection', inquirerFileTreeSelection)
 
@@ -102,14 +113,16 @@ export const prepareCodeContext = async (directory, { clearHistory = false, retu
 	await saveListToFile(answers.files);
 	const files = await includeDirectoryFiles(answers.files, FILE_EXTS);
 
-	console.log('Generating declarations for files:');
+	console.log(`${returnContents ? 'Getting contents of' : 'Generating declarations for'} files:`);
 	files.forEach(file => console.log(` - ${path.relative(directory, file)}`));
 
-	const createdFiles = compile(files, {
-		allowJs: true,
-		declaration: true,
-		emitDeclarationOnly: true,
-	});
+	const createdFiles = returnContents
+		? await getFilesContents(files)
+		: compile(files, {
+			allowJs: true,
+			declaration: true,
+			emitDeclarationOnly: true,
+		});
 
 	if (returnJson) {
 		const declarations = Object.entries(createdFiles).reduce((accu, [filePath, declaration]) => {
